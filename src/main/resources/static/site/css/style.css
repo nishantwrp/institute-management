@@ -268,3 +268,7 @@ h1::after {
     color:#fff;
     font-size:15px;
 }
+
+.dropdown-item {
+    padding-left: 10px;
+}

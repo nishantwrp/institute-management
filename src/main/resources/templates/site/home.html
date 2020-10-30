@@ -1,42 +1,10 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-    <meta name="description" content="" />
-    <meta name="author" content="" />
-    <title>Institute Management</title>
-    <link href="/site/css/bootstrap.css" rel="stylesheet" />
-    <link href="/site/css/font-awesome.min.css" rel="stylesheet" />
-    <link href="/site/css/flexslider.css" rel="stylesheet" />
-    <link href="/site/css/style.css" rel="stylesheet" />
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,700,300' rel='stylesheet' type='text/css' />
-</head>
-<body >
+<head th:replace="site/layouts/header :: header"></head>
+<body>
 
-<div class="navbar navbar-inverse navbar-fixed-top " id="menu">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#"><img class="logo-custom" src="/site/img/logo180-50.png" alt=""  /></a>
-        </div>
-        <div class="navbar-collapse collapse move-me">
-            <ul class="nav navbar-nav navbar-right">
-                <li ><a href="#home">HOME</a></li>
-                <li><a href="#features-sec">FEATURES</a></li>
-                <li><a href="#faculty-sec">FACULTY</a></li>
-                <li><a href="#course-sec">COURSES</a></li>
-                <li><a href="#contact-sec">CONTACT</a></li>
-            </ul>
-        </div>
+<div th:replace="site/layouts/navbar :: navbar"></div>
 
-    </div>
-</div>
-<!--NAVBAR SECTION END-->
 <div class="home-sec" id="home" >
     <div class="overlay">
         <div class="container">
@@ -398,17 +366,9 @@
 
 </div>
 </div>
-<!-- CONTACT SECTION END-->
-<div id="footer">
-    &copy 2014 yourdomain.com | All Rights Reserved |  <a href="http://binarytheme.com" style="color: #fff" target="_blank">Design by : binarytheme.com</a>
-</div>
-<!-- FOOTER SECTION END-->
 
-<script src="/site/js/jquery-1.10.2.js"></script>
-<script src="/site/js/bootstrap.js"></script>
-<script src="/site/js/jquery.flexslider.js"></script>
-<script src="/site/js/scrollReveal.js"></script>
-<script src="/site/js/jquery.easing.min.js"></script>
-<script src="/site/js/custom.js"></script>
+<div th:replace="site/layouts/footer :: footer"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+
 </body>
 </html>

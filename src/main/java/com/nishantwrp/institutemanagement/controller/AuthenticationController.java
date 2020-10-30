@@ -9,6 +9,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 
@@ -27,11 +28,11 @@ public class AuthenticationController {
         }
 
         model.addAttribute("credentials", new User());
-        return "site/login";
+        return "dashboard/login";
     }
 
     @PostMapping("/login")
-    public String postLogin(@ModelAttribute User credentials, Model model, HttpSession session) {
+    public String postLogin(@ModelAttribute User credentials, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         if (authenticationService.isAuthenticated(session)) {
             return "redirect:/";
         }
@@ -43,7 +44,9 @@ public class AuthenticationController {
         try {
             if (authenticationService.checkCredentials(username, password)) {
                 authenticationService.loginUser(session, username);
-                return "redirect:/";
+
+                redirectAttributes.addFlashAttribute("successToast", "Successfully logged in!");
+                return "redirect:/dashboard";
             }
             errorMessage = "Incorrect password.";
         } catch (Exception e) {
@@ -52,7 +55,7 @@ public class AuthenticationController {
 
         model.addAttribute("credentials", credentials);
         toastService.displayErrorToast(model, errorMessage);
-        return "site/login";
+        return "dashboard/login";
     }
 
     @GetMapping("/logout")

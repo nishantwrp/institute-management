@@ -13,7 +13,7 @@ abstract class BaseController {
     public void addDefaultAttributes(Model model, HttpSession session) {
         String currentUser = authenticationService.getCurrentUser(session);
         if (currentUser != null) {
-            model.addAttribute("user", currentUser);
+            model.addAttribute("username", currentUser);
         }
     }
 }

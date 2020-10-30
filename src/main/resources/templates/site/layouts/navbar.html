@@ -14,9 +14,9 @@
                 <li><a href="#features-sec">Features</a></li>
                 <li><a href="#faculty-sec">Faculty</a></li>
                 <li><a href="#course-sec">Courses</a></li>
-                <li><a th:unless="${user}" th:href="@{/login}">Login</a></li>
-                <li class="nav-item dropdown" th:if="${user}">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${user}"></a>
+                <li><a th:unless="${username}" th:href="@{/login}">Login</a></li>
+                <li class="nav-item dropdown" th:if="${username}">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${username}"></a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" th:href="@{/dashboard}">Dashboard</a>
                         <div class="dropdown-divider"></div>

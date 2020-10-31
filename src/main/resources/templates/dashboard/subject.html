@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="dashboard/layouts/header :: header"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="dashboard/layouts/sidebar :: sidebar"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav th:replace="dashboard/layouts/navbar :: navbar"></nav>
+
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800" th:text="${subject.name}"></h1>
+                    <a th:href="${deleteUrl}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm">Delete Subject</a>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td>Name</td>
+                                    <td th:text="${subject.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Subject Code</td>
+                                    <td th:text="${subject.code}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Assigned To</td>
+                                    <td th:if="${subject.assignedTo}" th:text="${subject.assignedTo.name}"></td>
+                                    <td th:unless="${subject.assignedTo}">Nobody</td>
+                                </tr>
+                                <tr th:if="${subject.assignedTo}">
+                                    <td>Actions</td>
+                                    <td><a th:href="${unassignUrl}" class="btn btn-sm btn-danger">Unassign</a></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4" th:unless="${subject.assignedTo}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Assign a faculty</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="${assignUrl}" th:object="${subject}">
+                            <input style="display:none;" th:value="${subject.id}" th:field="*{id}">
+                            <div class="form-group">
+                                <label for="faculty">Choose a faculty</label>
+                                <select id="faculty" required="required" class="form-control" th:field="*{facultyId}">
+                                    <option th:each="faculty: ${faculties}" th:value="${faculty.id}" th:text="${faculty.name}"></option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer th:replace="dashboard/layouts/footer :: footer"></footer>
+    </div>
+</div>
+
+<a th:replace="dashboard/layouts/scrollToTop :: scrollToTop"> </a>
+<div th:replace="dashboard/layouts/logoutModal :: logoutModal"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+</body>
+
+</html>

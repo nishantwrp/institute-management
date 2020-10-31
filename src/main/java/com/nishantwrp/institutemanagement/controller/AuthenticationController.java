@@ -45,7 +45,7 @@ public class AuthenticationController {
             if (authenticationService.checkCredentials(username, password)) {
                 authenticationService.loginUser(session, username);
 
-                redirectAttributes.addFlashAttribute("successToast", "Successfully logged in!");
+                toastService.redirectWithSuccessToast(redirectAttributes, "Successfully logged in.");
                 return "redirect:/dashboard";
             }
             errorMessage = "Incorrect password.";

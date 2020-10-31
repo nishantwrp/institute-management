@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="dashboard/layouts/header :: header"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="dashboard/layouts/sidebar :: sidebar"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav th:replace="dashboard/layouts/navbar :: navbar"></nav>
+
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Add Faculty</h1>
+                </div>
+                <p class="mb-4">
+                    Created faculty can then login using their <u>email</u> as <b>username</b> and <u>DOB</u> (dd-mm-yyyy) as <b>password</b>.
+                </p>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Faculty creation form</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="@{/dashboard/add/faculty}" th:object="${faculty}">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" class="form-control" required="required" placeholder="Name" th:field="*{name}">
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" class="form-control" required="required" placeholder="Email" th:field="*{email}">
+                            </div>
+                            <div class="form-group">
+                                <label for="phoneNo">Phone no.</label>
+                                <input type="number" id="phoneNo" class="form-control" required="required" placeholder="Phone" th:field="*{phone}">
+                            </div>
+                            <div class="form-group">
+                                <label for="dateOfBirth">Date of Birth</label>
+                                <input type="date" class="form-control" id="dateOfBirth" required="required" placeholder="Date of Birth" th:field="*{dob}">
+                            </div>
+                            <div class="form-group">
+                                <label for="bio">Bio</label>
+                                <textarea id="bio" required="required" class="form-control" rows="2" th:field="*{bio}"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Address</label>
+                                <textarea id="address" required="required" class="form-control" rows="3" th:field="*{address}"></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer th:replace="dashboard/layouts/footer :: footer"></footer>
+    </div>
+</div>
+
+<a th:replace="dashboard/layouts/scrollToTop :: scrollToTop"> </a>
+<div th:replace="dashboard/layouts/logoutModal :: logoutModal"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+</body>
+
+</html>

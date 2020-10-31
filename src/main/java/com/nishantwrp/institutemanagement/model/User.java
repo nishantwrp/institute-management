@@ -3,7 +3,7 @@ package com.nishantwrp.institutemanagement.model;
 public class User {
     private String username;
     private String password;
-    private Boolean is_admin;
+    private Boolean isAdmin;
 
     public String getPassword() {
         return password;
@@ -13,8 +13,8 @@ public class User {
         return username;
     }
 
-    public Boolean isAdmin() {
-        return is_admin;
+    public Boolean getIsAdmin() {
+        return isAdmin;
     }
 
     public void setUsername(String username) {
@@ -23,5 +23,9 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setIsAdmin(Boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 }

@@ -29,4 +29,9 @@ public class FacultyRepository {
         String sql = "SELECT * FROM faculty WHERE id = ?";
         return template.queryForObject(sql, new Object[] {id}, new BeanPropertyRowMapper<>(Faculty.class));
     }
+
+    public void deleteFaculty(int id) {
+        String sql = "DELETE FROM faculty WHERE id = ?";
+        template.update(sql, id);
+    }
 }

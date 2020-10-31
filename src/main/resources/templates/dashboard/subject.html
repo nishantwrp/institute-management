@@ -33,7 +33,9 @@
                                 </tr>
                                 <tr>
                                     <td>Assigned To</td>
-                                    <td th:if="${subject.assignedTo}" th:text="${subject.assignedTo.name}"></td>
+                                    <td th:if="${subject.assignedTo}">
+                                        <a th:href="${'/dashboard/manage/faculty/' + subject.assignedTo.id}" th:text="${subject.assignedTo.name}"></a>
+                                    </td>
                                     <td th:unless="${subject.assignedTo}">Nobody</td>
                                 </tr>
                                 <tr th:if="${subject.assignedTo}">

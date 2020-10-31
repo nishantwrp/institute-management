@@ -107,6 +107,50 @@ public class DashboardController extends BaseController {
         return "dashboard/addFaculty";
     }
 
+    @GetMapping("/dashboard/manage/faculty/{facultyId}")
+    public String manageFaculty(@PathVariable("facultyId") String facultyId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Faculty faculty = facultyService.getFacultyById(facultyId);
+        model.addAttribute("faculty", faculty);
+        model.addAttribute("deleteUrl", "/dashboard/manage/faculty/" + facultyId + "/delete");
+        return "dashboard/faculty";
+    }
+
+    @GetMapping("/dashboard/manage/faculty/{facultyId}/delete")
+    public String deleteFaculty(@PathVariable("facultyId") String facultyId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Faculty faculty = facultyService.getFacultyById(facultyId);
+
+        try {
+            facultyService.deleteFaculty(faculty);
+            toastService.redirectWithSuccessToast(redirectAttributes, "Faculty deleted successfully.");
+            return "redirect:/dashboard/manage/faculty";
+        } catch (Exception e) {}
+
+        toastService.redirectWithErrorToast(redirectAttributes, "Unassign all the subjects assigned to this faculty first.");
+        return "redirect:/dashboard/manage/faculty/" + facultyId;
+    }
+
     @GetMapping("/dashboard/manage/subjects")
     public String manageSubjects(Model model, HttpSession session) {
         if (!isAuthenticated(session)) {

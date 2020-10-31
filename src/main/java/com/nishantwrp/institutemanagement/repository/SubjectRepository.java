@@ -38,4 +38,9 @@ public class SubjectRepository {
         String sql = "UPDATE subject SET facultyId=? WHERE id=?";
         template.update(sql, facultyId, id);
     }
+
+    public List<Subject> getAllByFaculty(Integer facultyId) {
+        String sql = "SELECT * FROM subject WHERE facultyId = ?";
+        return template.query(sql, new Object[] {facultyId}, new BeanPropertyRowMapper<>(Subject.class));
+    }
 }

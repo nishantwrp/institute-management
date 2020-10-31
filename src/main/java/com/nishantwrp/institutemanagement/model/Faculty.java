@@ -1,6 +1,7 @@
 package com.nishantwrp.institutemanagement.model;
 
 import java.util.Date;
+import java.util.List;
 
 public class Faculty {
     private int id;
@@ -74,5 +75,16 @@ public class Faculty {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    // Extra Properties
+    private List<Subject> assignedSubjects;
+
+    public List<Subject> getAssignedSubjects() {
+        return assignedSubjects;
+    }
+
+    public void setAssignedSubjects(List<Subject> assignedSubjects) {
+        this.assignedSubjects = assignedSubjects;
     }
 }

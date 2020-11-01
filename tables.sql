@@ -57,3 +57,19 @@ CREATE TABLE IF NOT EXISTS payout
   PRIMARY KEY (id),
   FOREIGN KEY (facultyId) REFERENCES faculty(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS registration_application
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(50) NOT NULL,
+  date Date NOT NULL,
+  dob Date NOT NULL,
+  about TEXT NOT NULL,
+  address VARCHAR(511) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  interestedMajors VARCHAR(511) NOT NULL,
+  sessionId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (sessionId) REFERENCES session(id) ON DELETE CASCADE
+);

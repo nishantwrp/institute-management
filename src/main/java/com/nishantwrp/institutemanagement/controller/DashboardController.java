@@ -1,9 +1,6 @@
 package com.nishantwrp.institutemanagement.controller;
 
-import com.nishantwrp.institutemanagement.model.Faculty;
-import com.nishantwrp.institutemanagement.model.Major;
-import com.nishantwrp.institutemanagement.model.Payout;
-import com.nishantwrp.institutemanagement.model.Subject;
+import com.nishantwrp.institutemanagement.model.*;
 import com.nishantwrp.institutemanagement.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
@@ -33,6 +30,9 @@ public class DashboardController extends BaseController {
 
     @Autowired
     private PayoutService payoutService;
+
+    @Autowired
+    private SessionService sessionService;
 
     // Needed to automatically convert String date in form to Date object.
     @InitBinder
@@ -415,5 +415,132 @@ public class DashboardController extends BaseController {
         majorService.deleteMajor(major);
         toastService.redirectWithSuccessToast(redirectAttributes, "Major deleted successfully.");
         return "redirect:/dashboard/manage/majors";
+    }
+
+    @GetMapping("/dashboard/manage/sessions")
+    public String manageSessions(Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("sessions", sessionService.getAllSessions());
+        return "dashboard/sessions";
+    }
+
+    @GetMapping("/dashboard/add/session")
+    public String addSession(Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        model.addAttribute("sessionObj", new Session());
+        return "dashboard/addSession";
+    }
+
+    @PostMapping("/dashboard/add/session")
+    public String postAddSession(@ModelAttribute Session sessionObj, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        sessionService.createSession(sessionObj);
+        toastService.redirectWithSuccessToast(attributes, "Session added successfully.");
+        return "redirect:/dashboard/manage/sessions";
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}")
+    public String manageSession(@PathVariable("sessionId") String sessionId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        model.addAttribute("sessionObj", sessionObj);
+        return "dashboard/session";
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/toggleCompletion")
+    public String toggleCompleteSession(@PathVariable("sessionId") String sessionId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        sessionService.toggleSessionCompletionStatus(sessionObj);
+        toastService.redirectWithSuccessToast(attributes, "Session updated successfully.");
+        return "redirect:/dashboard/manage/session/" + sessionId;
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/toggleRegistrations")
+    public String toggleRegistrationSession(@PathVariable("sessionId") String sessionId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        sessionService.toggleSessionRegistrationsStatus(sessionObj);
+        toastService.redirectWithSuccessToast(attributes, "Session updated successfully.");
+        return "redirect:/dashboard/manage/session/" + sessionId;
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/delete")
+    public String deleteSession(@PathVariable("sessionId") String sessionId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        sessionService.deleteSession(sessionObj);
+        toastService.redirectWithSuccessToast(attributes, "Session deleted successfully.");
+        return "redirect:/dashboard/manage/sessions";
     }
 }

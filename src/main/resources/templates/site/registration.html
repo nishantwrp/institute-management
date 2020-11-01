@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head th:replace="site/layouts/header :: header"></head>
+<body>
+
+<div th:replace="site/layouts/navbar :: navbar"></div>
+
+<div id="contact-sec">
+    <div class="overlay">
+        <div class="container set-pad">
+            <div class="row text-center">
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
+                    <h1 data-scroll-reveal="enter from the bottom after 0.1s" class="header-line" >Registration Form</h1>
+                </div>
+
+            </div>
+            <div class="row set-row-pad"  data-scroll-reveal="enter from the bottom after 0.5s" >
+                <div class="col-lg-8 col-lg-offset-2 col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2">
+                    <form method="post" th:action="@{/registration}" th:object="${application}">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" class="form-control" required="required" th:field="*{name}">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" class="form-control" required="required" th:field="*{email}">
+                        </div>
+                        <div class="form-group">
+                            <label for="phoneNo">Phone no.</label>
+                            <input type="number" id="phoneNo" class="form-control" required="required" th:field="*{phone}">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateOfBirth">Date of Birth</label>
+                            <input type="date" class="form-control" id="dateOfBirth" required="required" th:field="*{dob}">
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Address</label>
+                            <textarea id="address" required="required" class="form-control" rows="3" th:field="*{address}"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="session">Session you want to apply for</label>
+                            <select style="color: orange;" id="session" required="required" class="form-control" th:field="*{sessionId}">
+                                <option th:each="ses : ${sessions}" th:value="${ses.id}" th:text="${ses.startYear}" th:if="${ses.registrationsOpen}"></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="majors">Interested Majors</label>
+                            <textarea id="majors" required="required" class="form-control" rows="2" th:field="*{interestedMajors}"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="about">About (Past education etc.)</label>
+                            <textarea id="about" required="required" class="form-control" rows="4" th:field="*{about}"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <button type="submit" class="btn btn-info btn-block btn-lg">SUBMIT FORM</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div th:replace="site/layouts/footer :: footer"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+
+</body>
+</html>

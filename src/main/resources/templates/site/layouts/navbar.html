@@ -11,9 +11,7 @@
         <div class="navbar-collapse collapse move-me">
             <ul class="nav navbar-nav navbar-right">
                 <li ><a th:href="@{/}">Home</a></li>
-                <li><a href="#features-sec">Features</a></li>
-                <li><a href="#faculty-sec">Faculty</a></li>
-                <li><a href="#course-sec">Courses</a></li>
+                <li ><a th:href="@{/registration}">Registration</a></li>
                 <li><a th:unless="${username}" th:href="@{/login}">Login</a></li>
                 <li class="nav-item dropdown" th:if="${username}">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" th:text="${username}"></a>

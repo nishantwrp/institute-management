@@ -37,4 +37,12 @@ public class Session {
     public void setStartYear(int startYear) {
         this.startYear = startYear;
     }
+
+    public void toggleIsComplete() {
+        this.isComplete = !this.isComplete;
+    }
+
+    public void toggleRegistrationsOpen() {
+        this.registrationsOpen = !this.registrationsOpen;
+    }
 }

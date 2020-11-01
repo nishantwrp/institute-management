@@ -50,11 +50,54 @@
                                 <tr>
                                     <td>Assigned Subjects</td>
                                     <td th:if="${faculty.assignedSubjects.size() == 0}">None</td>
-                                    <td>
+                                    <td th:unless="${faculty.assignedSubjects.size() == 0}">
                                         <div th:each="subject: ${faculty.assignedSubjects}">
                                             <a th:href="${'/dashboard/manage/subject/' + subject.id}" th:text="${subject.name}"></a>
                                             <br>
                                         </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Payouts</h6>
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Actions:</div>
+                                <a class="dropdown-item" th:href="${'/dashboard/manage/faculty/' + faculty.id + '/add/payout'}">Add Payout</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Transaction Id</th>
+                                    <th>Amount</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="payout: ${payouts}">
+                                    <td th:text="${#dates.format(payout.date, 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${payout.transactionId}"></td>
+                                    <td th:text="${payout.amount}"></td>
+                                    <td th:text="${payout.notes}"></td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/faculty/' + faculty.id + '/payout/' + payout.id + '/delete'}" class="btn-sm btn-danger">
+                                            <span class="text">Delete</span>
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>

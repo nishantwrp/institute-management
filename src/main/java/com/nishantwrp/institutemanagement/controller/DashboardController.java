@@ -2,11 +2,9 @@ package com.nishantwrp.institutemanagement.controller;
 
 import com.nishantwrp.institutemanagement.model.Faculty;
 import com.nishantwrp.institutemanagement.model.Major;
+import com.nishantwrp.institutemanagement.model.Payout;
 import com.nishantwrp.institutemanagement.model.Subject;
-import com.nishantwrp.institutemanagement.service.FacultyService;
-import com.nishantwrp.institutemanagement.service.MajorService;
-import com.nishantwrp.institutemanagement.service.SubjectService;
-import com.nishantwrp.institutemanagement.service.ToastService;
+import com.nishantwrp.institutemanagement.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.propertyeditors.CustomDateEditor;
 import org.springframework.stereotype.Controller;
@@ -32,6 +30,9 @@ public class DashboardController extends BaseController {
 
     @Autowired
     private MajorService majorService;
+
+    @Autowired
+    private PayoutService payoutService;
 
     // Needed to automatically convert String date in form to Date object.
     @InitBinder
@@ -122,8 +123,67 @@ public class DashboardController extends BaseController {
 
         Faculty faculty = facultyService.getFacultyById(facultyId);
         model.addAttribute("faculty", faculty);
+        model.addAttribute("payouts", payoutService.getAllPayoutsByFaculty(faculty));
         model.addAttribute("deleteUrl", "/dashboard/manage/faculty/" + facultyId + "/delete");
         return "dashboard/faculty";
+    }
+
+    @GetMapping("/dashboard/manage/faculty/{facultyId}/add/payout")
+    public String addPayout(@PathVariable("facultyId") String facultyId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Faculty faculty = facultyService.getFacultyById(facultyId);
+        model.addAttribute("faculty", faculty);
+        model.addAttribute("payout", new Payout());
+        return "dashboard/addPayout";
+    }
+
+    @PostMapping("/dashboard/manage/faculty/{facultyId}/add/payout")
+    public String postAddPayout(@PathVariable("facultyId") String facultyId, @ModelAttribute Payout payout, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Faculty faculty = facultyService.getFacultyById(facultyId);
+        payout.setDate(new Date());
+        payoutService.addPayout(payout, faculty);
+        toastService.redirectWithSuccessToast(attributes, "Payout added successfully.");
+        return "redirect:/dashboard/manage/faculty/" + facultyId;
+    }
+
+    @GetMapping("/dashboard/manage/faculty/{facultyId}/payout/{payoutId}/delete")
+    public String deletePayout(@PathVariable("facultyId") String facultyId, @PathVariable("payoutId") String payoutId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Payout payout = payoutService.getPayoutById(payoutId);
+        payoutService.deletePayout(payout);
+        toastService.redirectWithSuccessToast(attributes, "Payout deleted successfully.");
+        return "redirect:/dashboard/manage/faculty/" + facultyId;
     }
 
     @GetMapping("/dashboard/manage/faculty/{facultyId}/delete")

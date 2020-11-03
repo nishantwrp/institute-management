@@ -53,6 +53,50 @@
                 </div>
 
                 <div class="card shadow mb-4">
+                    <div class="card-header py-3 d-flex justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Semesters</h6>
+                        <div class="dropdown no-arrow">
+                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in" aria-labelledby="dropdownMenuLink">
+                                <div class="dropdown-header">Actions:</div>
+                                <a class="dropdown-item" th:href="${'/dashboard/manage/session/' + sessionObj.id + '/add/semester'}">Add Semester</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="semesterTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Fee</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="semester: ${semesters}">
+                                    <td th:text="${semester.name}"></td>
+                                    <td th:text="${semester.fee}"></td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/session/' + sessionObj.id + '/semester/' + semester.id + '/delete'}" class="btn-sm btn-danger">
+                                            <span class="text">Delete</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#semesterTable').DataTable();
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary">Students</h6>
                     </div>

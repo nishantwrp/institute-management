@@ -105,6 +105,7 @@ public class Student {
 
     // Extra Fields
     private Major major;
+    private Session session;
 
     public Major getMajor() {
         return major;
@@ -112,5 +113,13 @@ public class Student {
 
     public void setMajor(Major major) {
         this.major = major;
+    }
+
+    public Session getSession() {
+        return session;
+    }
+
+    public void setSession(Session session) {
+        this.session = session;
     }
 }

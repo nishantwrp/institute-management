@@ -30,4 +30,14 @@ public class StudentRepository {
         String sql = "SELECT * FROM student WHERE sessionId = ?";
         return template.query(sql, new Object[] {sessionId}, new BeanPropertyRowMapper<>(Student.class));
     }
+
+    public Student getByRollNo(String rollNo) {
+        String sql = "SELECT * FROM student WHERE rollNo = ?";
+        return template.queryForObject(sql, new Object[] {rollNo}, new BeanPropertyRowMapper<>(Student.class));
+    }
+
+    public void delete(String rollNo) {
+        String sql = "DELETE FROM student WHERE rollNo = ?";
+        template.update(sql, rollNo);
+    }
 }

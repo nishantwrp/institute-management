@@ -93,3 +93,13 @@ CREATE TABLE IF NOT EXISTS student
   FOREIGN KEY (majorId) REFERENCES major(id) ON DELETE CASCADE,
   FOREIGN KEY (applicationId) REFERENCES registration_application(id)
 );
+
+CREATE TABLE IF NOT EXISTS semester
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  fee INT NOT NULL,
+  name VARCHAR(100) NOT NULL,
+  sessionId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (sessionId) REFERENCES session(id) ON DELETE CASCADE
+);

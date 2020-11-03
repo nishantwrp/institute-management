@@ -73,3 +73,23 @@ CREATE TABLE IF NOT EXISTS registration_application
   PRIMARY KEY (id),
   FOREIGN KEY (sessionId) REFERENCES session(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS student
+(
+  rollNo VARCHAR(50) UNIQUE NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  phone VARCHAR(50) NOT NULL,
+  dob Date NOT NULL,
+  address VARCHAR(511) NOT NULL,
+  email VARCHAR(255) NOT NULL,
+  bio VARCHAR(511) NULL,
+  sessionId INT NOT NULL,
+  username VARCHAR(255) NOT NULL,
+  majorId INT NOT NULL,
+  applicationId INT NOT NULL,
+  PRIMARY KEY (rollNo),
+  FOREIGN KEY (sessionId) REFERENCES session(id) ON DELETE CASCADE,
+  FOREIGN KEY (username) REFERENCES user(username),
+  FOREIGN KEY (majorId) REFERENCES major(id) ON DELETE CASCADE,
+  FOREIGN KEY (applicationId) REFERENCES registration_application(id)
+);

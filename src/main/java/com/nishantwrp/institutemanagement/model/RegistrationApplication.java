@@ -93,4 +93,15 @@ public class RegistrationApplication {
     public void setDob(Date dob) {
         this.dob = dob;
     }
+
+    // Extra Fields
+    private Student student;
+
+    public Student getStudent() {
+        return student;
+    }
+
+    public void setStudent(Student student) {
+        this.student = student;
+    }
 }

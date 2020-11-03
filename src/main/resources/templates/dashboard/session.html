@@ -51,6 +51,80 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Students</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="studentTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Roll no.</th>
+                                    <th>Name</th>
+                                    <th>Phone no.</th>
+                                    <th>Major</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="student: ${students}">
+                                    <td th:text="${student.rollNo}"></td>
+                                    <td th:text="${student.name}"></td>
+                                    <td th:text="${student.phone}"></td>
+                                    <td th:text="${student.major.name}"></td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/student/' + student.rollNo}" class="btn-sm btn-primary">
+                                            <span class="text">Manage</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#studentTable').DataTable();
+                                });
+                            </script>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Registration Applications</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Name</th>
+                                    <th>Phone no.</th>
+                                    <th>Interested Majors</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="applicationObj: ${applications}" th:unless="${applicationObj.student}">
+                                    <td th:text="${#dates.format(applicationObj.date, 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${applicationObj.name}"></td>
+                                    <td th:text="${applicationObj.phone}"></td>
+                                    <td th:text="${applicationObj.interestedMajors}"></td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/session/' + sessionObj.id + '/application/' + applicationObj.id}" class="btn-sm btn-primary">
+                                            <span class="text">Manage</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

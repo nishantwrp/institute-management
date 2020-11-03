@@ -34,6 +34,12 @@ public class DashboardController extends BaseController {
     @Autowired
     private SessionService sessionService;
 
+    @Autowired
+    private RegistrationApplicationService registrationApplicationService;
+
+    @Autowired
+    private StudentService studentService;
+
     // Needed to automatically convert String date in form to Date object.
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -484,7 +490,74 @@ public class DashboardController extends BaseController {
 
         Session sessionObj = sessionService.getSessionById(sessionId);
         model.addAttribute("sessionObj", sessionObj);
+        model.addAttribute("applications", registrationApplicationService.getApplicationsForSession(sessionObj));
+        model.addAttribute("students", studentService.getAllStudentsInSession(sessionObj));
         return "dashboard/session";
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/application/{applicationId}")
+    public String manageApplication(@PathVariable("sessionId") String sessionId, @PathVariable("applicationId") String applicationId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        RegistrationApplication registrationApplication = registrationApplicationService.getApplicationById(applicationId);
+        model.addAttribute("sessionObj", sessionObj);
+        model.addAttribute("applicationObj", registrationApplication);
+        model.addAttribute("student", new Student());
+        model.addAttribute("majors", majorService.getAllMajors());
+        return "dashboard/application";
+    }
+
+    @PostMapping("/dashboard/manage/session/{sessionId}/application/{applicationId}/accept")
+    public String acceptApplication(@ModelAttribute Student student, @PathVariable("sessionId") String sessionId, @PathVariable("applicationId") String applicationId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        RegistrationApplication registrationApplication = registrationApplicationService.getApplicationById(applicationId);
+        try {
+            registrationApplicationService.acceptApplication(registrationApplication, student);
+            toastService.redirectWithSuccessToast(attributes, "Application accepted successfully.");
+            return "redirect:/dashboard/manage/session/" + sessionId;
+        } catch (Exception e) { }
+
+        toastService.redirectWithErrorToast(attributes, "A student with the same roll no found.");
+        return "redirect:/dashboard/manage/session/" + sessionId + "/application/" + applicationId;
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/application/{applicationId}/delete")
+    public String deleteApplication(@PathVariable("sessionId") String sessionId, @PathVariable("applicationId") String applicationId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        RegistrationApplication registrationApplication = registrationApplicationService.getApplicationById(applicationId);
+        registrationApplicationService.deleteApplication(registrationApplication);
+        toastService.redirectWithSuccessToast(attributes, "Application deleted successfully.");
+        return "redirect:/dashboard/manage/session/" + sessionId;
     }
 
     @GetMapping("/dashboard/manage/session/{sessionId}/toggleCompletion")

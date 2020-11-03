@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="dashboard/layouts/header :: header"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="dashboard/layouts/sidebar :: sidebar"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav th:replace="dashboard/layouts/navbar :: navbar"></nav>
+
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800">Registration Application</h1>
+                    <a th:unless="${applicationObj.student}" th:href="${'/dashboard/manage/session/' + sessionObj.id + '/application/' + applicationObj.id + '/delete'}" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm">Delete Application</a>
+                </div>
+                <p class="mb-4">
+                    Accepted students can then login using their <u>Roll No.</u> as <b>username</b> and <u>DOB</u> (dd-mm-yyyy) as <b>password</b>.
+                </p>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td>Name</td>
+                                    <td th:text="${applicationObj.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone no.</td>
+                                    <td th:text="${applicationObj.phone}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td th:text="${applicationObj.email}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Date applied</td>
+                                    <td th:text="${#dates.format(applicationObj.date, 'dd-MM-yyyy')}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Date of Birth</td>
+                                    <td th:text="${#dates.format(applicationObj.dob, 'dd-MM-yyyy')}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Address</td>
+                                    <td th:text="${applicationObj.address}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Interested Majors</td>
+                                    <td th:text="${applicationObj.interestedMajors}"></td>
+                                </tr>
+                                <tr>
+                                    <td>About</td>
+                                    <td th:text="${applicationObj.about}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Session Applied For</td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/session/' + sessionObj.id}" th:text="${sessionObj.startYear}">
+                                        </a>
+                                    </td>
+                                </tr>
+                                <tr th:if="${applicationObj.student}">
+                                    <td>Student</td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/student/' + applicationObj.student.rollNo}" th:text="${applicationObj.student.rollNo + ' - ' + applicationObj.student.name}">
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4" th:unless="${applicationObj.student}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Accept application</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="${'/dashboard/manage/session/' + sessionObj.id + '/application/' + applicationObj.id + '/accept'}" th:object="${student}">
+                            <div class="form-group">
+                                <label for="rollNo">Enter new roll no.</label>
+                                <input type="text" id="rollNo" class="form-control" required="required" placeholder="Roll no." th:field="*{rollNo}">
+                            </div>
+                            <div class="form-group">
+                                <label for="major">Select assigned major</label>
+                                <select id="major" class="form-control" required="required" th:field="*{majorId}">
+                                    <option th:each="major : ${majors}" th:value="${major.id}" th:text="${major.name}"></option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer th:replace="dashboard/layouts/footer :: footer"></footer>
+    </div>
+</div>
+
+<a th:replace="dashboard/layouts/scrollToTop :: scrollToTop"> </a>
+<div th:replace="dashboard/layouts/logoutModal :: logoutModal"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+</body>
+
+</html>

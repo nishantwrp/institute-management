@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 @Controller
 public class DashboardController extends BaseController {
@@ -42,6 +43,9 @@ public class DashboardController extends BaseController {
 
     @Autowired
     private SemesterService semesterService;
+
+    @Autowired
+    private CourseStructureService courseStructureService;
 
     // Needed to automatically convert String date in form to Date object.
     @InitBinder
@@ -657,6 +661,142 @@ public class DashboardController extends BaseController {
         semesterService.createSemester(sessionObj, semester);
         toastService.redirectWithSuccessToast(attributes, "Semester added successfully.");
         return "redirect:/dashboard/manage/session/" + sessionId;
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}")
+    public String manageSemester(@PathVariable("sessionId") String sessionId, @PathVariable("semesterId") String semesterId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        List<Major> majors = majorService.getAllMajorsWithCourseStructure(semester);
+        model.addAttribute("sessionObj", sessionObj);
+        model.addAttribute("semester", semester);
+        model.addAttribute("majors", majors);
+        return "dashboard/semester";
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}/add/structure/{majorId}")
+    public String addStructure(@PathVariable("sessionId") String sessionId, @PathVariable("semesterId") String semesterId, @PathVariable("majorId") String majorId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Major major = majorService.getMajorById(majorId);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        courseStructureService.createCourseStructure(major, semester);
+        CourseStructure structure = courseStructureService.getStructureByMajorAndSemester(major, semester);
+        toastService.redirectWithSuccessToast(attributes, "Course structure created successfully.");
+        return "redirect:/dashboard/manage/session/" + sessionId + "/semester/" + semesterId + "/structure/" + structure.getId();
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}/structure/{structureId}")
+    public String manageStructure(@PathVariable("sessionId") String sessionId, @PathVariable("semesterId") String semesterId, @PathVariable("structureId") String structureId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        CourseStructure structure = courseStructureService.getStructureById(structureId);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        model.addAttribute("semester", semester);
+        model.addAttribute("structure", structure);
+        model.addAttribute("sessionObj", sessionObj);
+        return "dashboard/courseStructure";
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}/structure/{structureId}/delete")
+    public String deleteStructure(@PathVariable("sessionId") String sessionId, @PathVariable("semesterId") String semesterId, @PathVariable("structureId") String structureId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        CourseStructure structure = courseStructureService.getStructureById(structureId);
+        courseStructureService.deleteStructure(structure);
+        toastService.redirectWithSuccessToast(attributes, "Course structure deleted successfully.");
+        return "redirect:/dashboard/manage/session/" + sessionId + "/semester/" + semesterId;
+    }
+
+    @GetMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}/structure/{structureId}/add/subject")
+    public String addSubjectToStructure(@PathVariable("sessionId") String sessionId, @PathVariable("semesterId") String semesterId, @PathVariable("structureId") String structureId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Session sessionObj = sessionService.getSessionById(sessionId);
+        CourseStructure structure = courseStructureService.getStructureById(structureId);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        CourseStructureSubject courseStructureSubject = new CourseStructureSubject();
+        courseStructureSubject.setCourseStructureId(structure.getId());
+
+        List<Subject> subjectList = subjectService.getAllSubjectsNotPresentInCourseStructure(structure);
+
+        if (subjectList.size() == 0) {
+            toastService.redirectWithErrorToast(attributes, "All subjects already present in this course structure.");
+            return "redirect:/dashboard/manage/session/" + sessionId + "/semester/" + semesterId + "/structure/" + structureId;
+        }
+
+        model.addAttribute("sessionObj", sessionObj);
+        model.addAttribute("semester", semester);
+        model.addAttribute("structure", structure);
+        model.addAttribute("courseStructureSubject", courseStructureSubject);
+        model.addAttribute("subjects", subjectList);
+        return "dashboard/addSubjectToStructure";
+    }
+
+    @PostMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}/structure/{structureId}/add/subject")
+    public String postAddSubjectToStructure(@ModelAttribute CourseStructureSubject courseStructureSubject, @PathVariable("sessionId") String sessionId, @PathVariable("semesterId") String semesterId, @PathVariable("structureId") String structureId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        courseStructureService.addSubjectToCourseStructure(courseStructureSubject);
+        toastService.redirectWithSuccessToast(attributes, "Subject added to this course structure successfully.");
+        return "redirect:/dashboard/manage/session/" + sessionId + "/semester/" + semesterId + "/structure/" + structureId;
     }
 
     @GetMapping("/dashboard/manage/session/{sessionId}/semester/{semesterId}/delete")

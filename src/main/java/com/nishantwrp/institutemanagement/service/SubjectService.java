@@ -1,11 +1,13 @@
 package com.nishantwrp.institutemanagement.service;
 
+import com.nishantwrp.institutemanagement.model.CourseStructure;
 import com.nishantwrp.institutemanagement.model.Subject;
 import com.nishantwrp.institutemanagement.repository.FacultyRepository;
 import com.nishantwrp.institutemanagement.repository.SubjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -46,5 +48,40 @@ public class SubjectService {
 
     public void updateFaculty(Subject subject, Integer facultyId) {
         subjects.updateFaculty(subject.getId(), facultyId);
+    }
+
+    public List<Subject> getAllSubjectsNotPresentInCourseStructure(CourseStructure courseStructure) {
+        List<Subject> allSubjects = subjects.getAll();
+        List<Subject> optional = subjects.getSubjectsInCourseStructure(courseStructure.getId(), true);
+        List<Subject> compulsory = subjects.getSubjectsInCourseStructure(courseStructure.getId(), false);
+        List<Subject> subjectList = new ArrayList<>();
+
+        for (int i = 0; i < allSubjects.size(); i++) {
+            Subject subject = allSubjects.get(i);
+
+            Boolean flag = true;
+
+            for (int j = 0; j < optional.size(); j++) {
+                if (optional.get(j).getId() == subject.getId()) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                for (int j = 0; j < compulsory.size(); j++) {
+                    if (compulsory.get(j).getId() == subject.getId()) {
+                        flag = false;
+                        break;
+                    }
+                }
+            }
+
+            if (flag) {
+                subjectList.add(subject);
+            }
+
+        }
+        return subjectList;
     }
 }

@@ -80,8 +80,8 @@
                                     <td th:text="${semester.name}"></td>
                                     <td th:text="${semester.fee}"></td>
                                     <td>
-                                        <a th:href="${'/dashboard/manage/session/' + sessionObj.id + '/semester/' + semester.id + '/delete'}" class="btn-sm btn-danger">
-                                            <span class="text">Delete</span>
+                                        <a th:href="${'/dashboard/manage/session/' + sessionObj.id + '/semester/' + semester.id}" class="btn-sm btn-primary">
+                                            <span class="text">Manage</span>
                                         </a>
                                     </td>
                                 </tr>

@@ -103,3 +103,24 @@ CREATE TABLE IF NOT EXISTS semester
   PRIMARY KEY (id),
   FOREIGN KEY (sessionId) REFERENCES session(id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS course_structure
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  majorId INT NOT NULL,
+  semesterId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (majorId) REFERENCES major(id) ON DELETE CASCADE,
+  FOREIGN KEY (semesterId) REFERENCES semester(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS subject_structure_relation
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  subjectId INT NOT NULL,
+  courseStructureId INT NOT NULL,
+  optional BOOLEAN NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (subjectId) REFERENCES subject(id) ON DELETE CASCADE,
+  FOREIGN KEY (courseStructureId) REFERENCES course_structure(id)  ON DELETE CASCADE
+);

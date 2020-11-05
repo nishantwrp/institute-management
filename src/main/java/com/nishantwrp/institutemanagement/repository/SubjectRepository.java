@@ -1,12 +1,13 @@
 package com.nishantwrp.institutemanagement.repository;
 
-import com.nishantwrp.institutemanagement.model.Faculty;
+import com.nishantwrp.institutemanagement.model.CourseStructureSubject;
 import com.nishantwrp.institutemanagement.model.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -42,5 +43,15 @@ public class SubjectRepository {
     public List<Subject> getAllByFaculty(Integer facultyId) {
         String sql = "SELECT * FROM subject WHERE facultyId = ?";
         return template.query(sql, new Object[] {facultyId}, new BeanPropertyRowMapper<>(Subject.class));
+    }
+
+    public List<Subject> getSubjectsInCourseStructure(int courseStructureId, Boolean optional) {
+        String sql = "SELECT * FROM subject_structure_relation WHERE courseStructureId = ? AND optional = ?";
+        List<CourseStructureSubject> courseStructureSubjectList = template.query(sql, new Object[] {courseStructureId, optional}, new BeanPropertyRowMapper<>(CourseStructureSubject.class));
+        List<Subject> subjectList = new ArrayList<>();
+        for (int i = 0; i < courseStructureSubjectList.size(); i++) {
+            subjectList.add(getById(courseStructureSubjectList.get(i).getSubjectId()));
+        }
+        return subjectList;
     }
 }

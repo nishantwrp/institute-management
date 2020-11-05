@@ -19,4 +19,16 @@ public class Major {
     public void setName(String name) {
         this.name = name;
     }
+
+    // Extra fields
+    // Can change according to semester
+    private CourseStructure courseStructure;
+
+    public CourseStructure getCourseStructure() {
+        return courseStructure;
+    }
+
+    public void setCourseStructure(CourseStructure courseStructure) {
+        this.courseStructure = courseStructure;
+    }
 }

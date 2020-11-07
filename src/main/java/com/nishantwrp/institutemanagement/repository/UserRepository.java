@@ -20,4 +20,9 @@ public class UserRepository {
         String sql = "SELECT * FROM user WHERE username = ?";
         return template.queryForObject(sql, new Object[] {username}, new BeanPropertyRowMapper<>(User.class));
     }
+
+    public void update(User user) {
+        String sql = "UPDATE user SET password = ? WHERE username = ?";
+        template.update(sql, user.getPassword(), user.getUsername());
+    }
 }

@@ -37,6 +37,18 @@
             <i class="fas fa-fw fa-cog"></i>
             <span>Majors</span></a>
     </li>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-heading">
+        Account
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/dashboard/changePassword}">
+            <i class="fas fa-key"></i>
+            <span>Change Password</span></a>
+    </li>
 </ul>
 
 <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" th:fragment="sidebar" th:if="${userRole == 'student'}">
@@ -62,6 +74,18 @@
         <a class="nav-link" th:href="@{/dashboard/student/semesters}">
             <i class="fas fa-fw fa-cog"></i>
             <span>Semesters</span></a>
+    </li>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-heading">
+        Account
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/dashboard/changePassword}">
+            <i class="fas fa-key"></i>
+            <span>Change Password</span></a>
     </li>
 </ul>
 
@@ -94,5 +118,17 @@
         <a class="nav-link" th:href="@{/dashboard/faculty/payouts}">
             <i class="fas fa-fw fa-cog"></i>
             <span>Payouts</span></a>
+    </li>
+
+    <hr class="sidebar-divider">
+
+    <div class="sidebar-heading">
+        Account
+    </div>
+
+    <li class="nav-item">
+        <a class="nav-link" th:href="@{/dashboard/changePassword}">
+            <i class="fas fa-key"></i>
+            <span>Change Password</span></a>
     </li>
 </ul>

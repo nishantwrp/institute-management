@@ -1,9 +1,7 @@
 package com.nishantwrp.institutemanagement.service;
 
 import com.nishantwrp.institutemanagement.model.*;
-import com.nishantwrp.institutemanagement.repository.SemesterRegistrationRepository;
-import com.nishantwrp.institutemanagement.repository.SemesterRepository;
-import com.nishantwrp.institutemanagement.repository.SubjectRepository;
+import com.nishantwrp.institutemanagement.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +18,28 @@ public class SemesterRegistrationService {
     @Autowired
     private SemesterRepository semesters;
 
+    @Autowired
+    private SemesterRegistrationSubjectRepository semesterRegistrationSubjects;
+
+    @Autowired
+    private ResultRepository results;
+
     private void getExtraFields(SemesterRegistration semesterRegistration) {
-        List<Subject> subjectList = subjects.getSubjectsInSemesterRegistration(semesterRegistration.getId());
+        List<SemesterRegistrationSubject> subjectList = semesterRegistrationSubjects
+                .getSubjectsInSemesterRegistration(semesterRegistration.getId());
+        for (int i = 0; i < subjectList.size(); i++) {
+            Subject subject = subjects.getById(subjectList.get(i).getSubjectId());
+            subjectList.get(i).setSubject(subject);
+
+            try {
+                Result result = results.getByRegistration(subjectList.get(i).getId());
+                subjectList.get(i).setResult(result);
+            } catch (Exception e) {}
+        }
+
         Semester semester = semesters.getById(semesterRegistration.getSemesterId());
-        semesterRegistration.setSubjects(subjectList);
+
+        semesterRegistration.setSubjectRegistrations(subjectList);
         semesterRegistration.setSemester(semester);
     }
 

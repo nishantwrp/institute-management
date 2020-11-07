@@ -30,17 +30,44 @@
                                     <td>Fee</td>
                                     <td th:text="${semester.fee}"></td>
                                 </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Subjects Registered</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="subjectTable" width="100%" cellspacing="0">
+                                <thead>
                                 <tr>
-                                    <td>Subjects Registered</td>
+                                    <th>Subject</th>
+                                    <th>Grade</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="subjectRegistration: ${semesterRegistration.subjectRegistrations}">
+                                    <td th:text="${subjectRegistration.subject.code + ' - ' + subjectRegistration.subject.name}"></td>
+                                    <td th:if="${subjectRegistration.result}" th:text="${subjectRegistration.result.grade}"></td>
+                                    <td th:unless="${subjectRegistration.result}">Not graded</td>
                                     <td>
-                                        <div th:each="subject: ${semesterRegistration.subjects}">
-                                            <a th:href="${'/dashboard/student/subject/' + subject.id}" th:text="${subject.code + ' - ' +  subject.name}"></a>
-                                            <br>
-                                        </div>
+                                        <a th:href="${'/dashboard/student/subject/' + subjectRegistration.id}" class="btn-sm btn-primary">
+                                            <span class="text">View</span>
+                                        </a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
+                            <script>
+                                $(document).ready(function () {
+                                    $('#subjectTable').DataTable();
+                                });
+                            </script>
                         </div>
                     </div>
                 </div>

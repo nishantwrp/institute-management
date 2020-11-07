@@ -32,16 +32,16 @@ public class SemesterRegistration {
     }
 
     // Extra Fields
-    private List<Subject> subjects;
+    private List<SemesterRegistrationSubject> subjectRegistrations;
     private Semester semester;
     private Student student;
 
-    public void setSubjects(List<Subject> subjects) {
-        this.subjects = subjects;
+    public List<SemesterRegistrationSubject> getSubjectRegistrations() {
+        return subjectRegistrations;
     }
 
-    public List<Subject> getSubjects() {
-        return subjects;
+    public void setSubjectRegistrations(List<SemesterRegistrationSubject> subjectRegistrations) {
+        this.subjectRegistrations = subjectRegistrations;
     }
 
     public Student getStudent() {

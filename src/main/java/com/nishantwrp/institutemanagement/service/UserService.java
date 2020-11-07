@@ -37,4 +37,9 @@ public class UserService {
 
         return "unknown";
     }
+
+    public void changePassword(String username, User user) {
+        user.setUsername(username);
+        users.update(user);
+    }
 }

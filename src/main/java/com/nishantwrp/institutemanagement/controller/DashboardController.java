@@ -61,6 +61,9 @@ public class DashboardController extends BaseController {
     @Autowired
     private ResultService resultService;
 
+    @Autowired
+    private UserService userService;
+
     // Needed to automatically convert String date in form to Date object.
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -1101,6 +1104,34 @@ public class DashboardController extends BaseController {
         return "redirect:/dashboard/student/semester/" + semesterId;
     }
 
+    @GetMapping("/dashboard/student/subject/{subjectRegistrationId}")
+    public String studentSubjectRegistration(@PathVariable("subjectRegistrationId") String subjectRegistrationId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        String rollNo = model.getAttribute("username").toString();
+        Student student = studentService.getStudentByRollNo(rollNo);
+        SemesterRegistrationSubject semesterRegistrationSubject = semesterRegistrationSubjectService.getById(subjectRegistrationId);
+
+        try {
+            Faculty faculty = facultyService.getFacultyById(semesterRegistrationSubject.getSubject().getFacultyId());
+            model.addAttribute("faculty", faculty);
+        } catch (Exception e) {
+            model.addAttribute("faculty", null);
+        }
+
+        model.addAttribute("subjectRegistration", semesterRegistrationSubject);
+        return "dashboard/studentSubjectRegistration";
+    }
+
     @GetMapping("/dashboard/faculty/subjects")
     public String facultySubjects(Model model, HttpSession session) {
         if (!isAuthenticated(session)) {
@@ -1210,5 +1241,28 @@ public class DashboardController extends BaseController {
 
         model.addAttribute("payouts", payouts);
         return "dashboard/facultyPayouts";
+    }
+
+    @GetMapping("/dashboard/changePassword")
+    public String changePassword(Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+        model.addAttribute("userObj", new User());
+        return "dashboard/changePassword";
+    }
+
+    @PostMapping("/dashboard/changePassword")
+    public String postChangePassword(@ModelAttribute User userObj, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+        userService.changePassword(model.getAttribute("username").toString(), userObj);
+        toastService.redirectWithSuccessToast(attributes, "Password changed successfully.");
+        return "redirect:/dashboard/changePassword";
     }
 }

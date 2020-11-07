@@ -65,14 +65,4 @@ public class SubjectRepository {
         }
         return subjectList;
     }
-
-    public List<Subject> getSubjectsInSemesterRegistration(int registrationId) {
-        String sql = "SELECT * FROM registration_subject_relation WHERE registrationId = ?";
-        List<SemesterRegistrationSubject> semesterRegistrationSubjects = template.query(sql, new Object[] {registrationId}, new BeanPropertyRowMapper<>(SemesterRegistrationSubject.class));
-        List<Subject> subjectList = new ArrayList<>();
-        for (int i = 0; i < semesterRegistrationSubjects.size(); i++) {
-            subjectList.add(getById(semesterRegistrationSubjects.get(i).getSubjectId()));
-        }
-        return subjectList;
-    }
 }

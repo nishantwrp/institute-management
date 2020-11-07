@@ -44,6 +44,10 @@ public class FacultyService {
         return faculty;
     }
 
+    public Faculty getFacultyById(int id) {
+        return faculties.getById(id);
+    }
+
     public Faculty getFacultyByEmail(String email) {
         Faculty faculty = faculties.getByEmail(email);
         getExtraProperties(faculty);

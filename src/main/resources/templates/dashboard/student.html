@@ -72,6 +72,35 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Registrations</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Semester</th>
+                                    <th>Actions</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="semesterRegistration: ${semesterRegistrations}">
+                                    <td th:text="${semesterRegistration.semester.name}"></td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/student/' + student.rollNo + '/registration/' + semesterRegistration.id}" class="btn-sm btn-success">
+                                            <span class="text">View</span>
+                                        </a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
 

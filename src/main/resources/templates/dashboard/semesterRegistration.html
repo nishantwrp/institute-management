@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="dashboard/layouts/header :: header"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="dashboard/layouts/sidebar :: sidebar"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav th:replace="dashboard/layouts/navbar :: navbar"></nav>
+
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800" th:text="${student.rollNo + ' - ' + student.name + ' - ' + semester.name}"></h1>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td>Student</td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/student/' + student.rollNo}" th:text="${student.rollNo + ' - ' + student.Name}"></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Session</td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/session/' + student.session.id}" th:text="${student.session.startYear}"></a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Semester</td>
+                                    <td>
+                                        <a th:href="${'/dashboard/manage/session/' + student.session.id + '/semester/' + semester.id}" th:text="${semester.name}"></a>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Fee transactions</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Transaction Id</th>
+                                    <th>Amount</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="feeTransaction: ${feeTransactions}">
+                                    <td th:text="${#dates.format(feeTransaction.date, 'dd-MM-yyyy')}"></td>
+                                    <td th:text="${feeTransaction.transactionId}"></td>
+                                    <td th:text="${feeTransaction.amount}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer th:replace="dashboard/layouts/footer :: footer"></footer>
+    </div>
+</div>
+
+<a th:replace="dashboard/layouts/scrollToTop :: scrollToTop"> </a>
+<div th:replace="dashboard/layouts/logoutModal :: logoutModal"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+</body>
+
+</html>

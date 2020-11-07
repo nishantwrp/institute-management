@@ -44,7 +44,17 @@ public class FacultyService {
         return faculty;
     }
 
+    public Faculty getFacultyByEmail(String email) {
+        Faculty faculty = faculties.getByEmail(email);
+        getExtraProperties(faculty);
+        return faculty;
+    }
+
     public void deleteFaculty(Faculty faculty) {
         faculties.deleteFaculty(faculty.getId());
+    }
+
+    public void updateFaculty(Faculty faculty) {
+        faculties.update(faculty);
     }
 }

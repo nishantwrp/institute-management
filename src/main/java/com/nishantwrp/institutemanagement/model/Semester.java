@@ -37,4 +37,16 @@ public class Semester {
     public void setFee(int fee) {
         this.fee = fee;
     }
+
+    // Extra fields
+    // Will change with every student
+    private SemesterRegistration semesterRegistration;
+
+    public SemesterRegistration getSemesterRegistration() {
+        return semesterRegistration;
+    }
+
+    public void setSemesterRegistration(SemesterRegistration semesterRegistration) {
+        this.semesterRegistration = semesterRegistration;
+    }
 }

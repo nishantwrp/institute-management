@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head th:replace="dashboard/layouts/header :: header"></head>
+
+<body id="page-top">
+<div id="wrapper">
+    <ul th:replace="dashboard/layouts/sidebar :: sidebar"></ul>
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            <nav th:replace="dashboard/layouts/navbar :: navbar"></nav>
+
+            <div class="container-fluid">
+                <div class="d-sm-flex align-items-center justify-content-between mb-4">
+                    <h1 class="h3 mb-0 text-gray-800" th:text="${subject.name + ' - ' + registration.registration.student.rollNo}"></h1>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Student Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td>Session</td>
+                                    <td th:text="${registration.registration.student.session.startYear}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Semester</td>
+                                    <td th:text="${registration.registration.semester.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Roll No.</td>
+                                    <td th:text="${registration.registration.student.rollNo}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td th:text="${registration.registration.student.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Email</td>
+                                    <td th:text="${registration.registration.student.email}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Date of Birth</td>
+                                    <td th:text="${#dates.format(registration.registration.student.dob, 'dd-MM-yyyy')}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Phone</td>
+                                    <td th:text="${registration.registration.student.phone}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Bio</td>
+                                    <td th:text="${registration.registration.student.bio}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Address</td>
+                                    <td th:text="${registration.registration.student.address}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Subject Info</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <tbody>
+                                <tr>
+                                    <td>Code</td>
+                                    <td th:text="${subject.code}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Name</td>
+                                    <td th:text="${subject.name}"></td>
+                                </tr>
+                                <tr>
+                                    <td>Grade</td>
+                                    <td th:if="${registration.result}" th:text="${registration.result.grade}"></td>
+                                    <td th:unless="${registration.result}">Not graded</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow mb-4" th:unless="${registration.result}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">Grade the student</h6>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" th:action="${'/dashboard/faculty/subject/' + subject.id + '/registration/' + registration.id + '/grade'}" th:object="${result}">
+                            <div class="form-group">
+                                <label for="grade">Grade</label>
+                                <select id="grade" required="required" class="form-control" th:field="*{grade}">
+                                    <option value="A">A</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B">B</option>
+                                    <option value="B-">B-</option>
+                                    <option value="C">C</option>
+                                    <option value="C-">C-</option>
+                                    <option value="F">F</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <footer th:replace="dashboard/layouts/footer :: footer"></footer>
+    </div>
+</div>
+
+<a th:replace="dashboard/layouts/scrollToTop :: scrollToTop"> </a>
+<div th:replace="dashboard/layouts/logoutModal :: logoutModal"></div>
+<script th:replace="site/layouts/toast :: toast"></script>
+</body>
+
+</html>

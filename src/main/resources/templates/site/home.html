@@ -140,9 +140,7 @@
                     <div id="collapse2" class="panel-collapse collapse" style="height: 0px;">
                         <div class="panel-body">
                             <ul>
-                                <li th:each="faculty: ${faculties}">
-                                    <a th:href="${'/faculty/' + faculty.id}" th:text="${faculty.name}"></a>
-                                </li>
+                                <li th:each="faculty: ${faculties}" th:text="${faculty.name}"></li>
                             </ul>
                         </div>
                     </div>

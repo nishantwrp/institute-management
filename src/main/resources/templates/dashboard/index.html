@@ -12,9 +12,11 @@
         <div class="container-fluid">
           <div class="d-sm-flex align-items-center justify-content-between mb-4">
             <h1 th:if="${userRole == 'admin'}" class="h3 mb-0 text-gray-800">Admin Dashboard</h1>
+            <h1 th:if="${userRole == 'faculty'}" class="h3 mb-0 text-gray-800">Faculty Dashboard</h1>
+            <h1 th:if="${userRole == 'student'}" class="h3 mb-0 text-gray-800">Student Dashboard</h1>
           </div>
 
-          <div class="row">
+          <div th:if="${userRole == 'admin'}" class="row">
 
             <div class="col-xl-3 col-md-6 mb-4">
               <div class="card border-left-primary shadow h-100 py-2">
@@ -81,6 +83,91 @@
             </div>
           </div>
 
+          <div th:if="${userRole == 'student'}" class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Profile</h6>
+            </div>
+            <div class="card-body">
+              <form method="post" th:action="@{/dashboard/studentUpdate}" th:object="${userProfile}">
+                <div class="form-group">
+                  <label for="rollNo">Roll No.</label>
+                  <input type="text" id="rollNo" disabled="disabled" class="form-control" th:value="${userProfile.rollNo}" th:field="*{rollNo}">
+                </div>
+                <div class="form-group">
+                  <label for="session">Session</label>
+                  <select id="session" disabled="disabled" class="form-control" th:field="*{sessionId}">
+                    <option th:value="${userProfile.sessionId}" th:text="${userProfile.session.startYear}"></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="major">Major</label>
+                  <select id="major" disabled="disabled" class="form-control" th:field="*{majorId}">
+                    <option th:value="${userProfile.majorId}" th:text="${userProfile.major.name}"></option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="name">Name</label>
+                  <input type="text" id="name" class="form-control" required="required" th:value="${userProfile.name}" th:field="*{name}">
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input type="email" id="email" class="form-control" required="required" th:value="${userProfile.email}" th:field="*{email}">
+                </div>
+                <div class="form-group">
+                  <label for="phoneNo">Phone no.</label>
+                  <input type="number" id="phoneNo" class="form-control" required="required" th:value="${userProfile.phone}" th:field="*{phone}">
+                </div>
+                <div class="form-group">
+                  <label for="dateOfBirth">Date of Birth</label>
+                  <input type="date" class="form-control" id="dateOfBirth" required="required" th:value="${userProfile.dob}" th:field="*{dob}">
+                </div>
+                <div class="form-group">
+                  <label for="bio">Bio</label>
+                  <textarea id="bio" required="required" class="form-control" rows="2" th:value="${userProfile.bio}" th:field="*{bio}"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="address">Address</label>
+                  <textarea id="address" required="required" class="form-control" rows="3" th:value="${userProfile.address}" th:field="*{address}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Info</button>
+              </form>
+            </div>
+          </div>
+
+          <div th:if="${userRole == 'faculty'}" class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Profile</h6>
+            </div>
+            <div class="card-body">
+              <form method="post" th:action="@{/dashboard/facultyUpdate}" th:object="${userProfile}">
+                <div class="form-group">
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" disabled="disabled" class="form-control" required="required" th:value="${userProfile.email}" th:field="*{email}">
+                  </div>
+                  <label for="name">Name</label>
+                  <input type="text" id="name" class="form-control" required="required" th:value="${userProfile.name}" th:field="*{name}">
+                </div>
+                <div class="form-group">
+                  <label for="phoneNo">Phone no.</label>
+                  <input type="number" id="phoneNo" class="form-control" required="required" th:value="${userProfile.phone}" th:field="*{phone}">
+                </div>
+                <div class="form-group">
+                  <label for="dateOfBirth">Date of Birth</label>
+                  <input type="date" class="form-control" id="dateOfBirth" required="required" th:value="${userProfile.dob}" th:field="*{dob}">
+                </div>
+                <div class="form-group">
+                  <label for="bio">Bio</label>
+                  <textarea id="bio" required="required" class="form-control" rows="2" th:value="${userProfile.bio}" th:field="*{bio}"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="address">Address</label>
+                  <textarea id="address" required="required" class="form-control" rows="3" th:value="${userProfile.address}" th:field="*{address}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Update Info</button>
+              </form>
+            </div>
+          </div>
         </div>
       </div>
 

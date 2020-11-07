@@ -1,6 +1,7 @@
 package com.nishantwrp.institutemanagement.repository;
 
 import com.nishantwrp.institutemanagement.model.CourseStructureSubject;
+import com.nishantwrp.institutemanagement.model.SemesterRegistrationSubject;
 import com.nishantwrp.institutemanagement.model.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -51,6 +52,26 @@ public class SubjectRepository {
         List<Subject> subjectList = new ArrayList<>();
         for (int i = 0; i < courseStructureSubjectList.size(); i++) {
             subjectList.add(getById(courseStructureSubjectList.get(i).getSubjectId()));
+        }
+        return subjectList;
+    }
+
+    public List<Subject> getSubjectsInCourseStructure(int courseStructureId) {
+        String sql = "SELECT * FROM subject_structure_relation WHERE courseStructureId = ?";
+        List<CourseStructureSubject> courseStructureSubjectList = template.query(sql, new Object[] {courseStructureId}, new BeanPropertyRowMapper<>(CourseStructureSubject.class));
+        List<Subject> subjectList = new ArrayList<>();
+        for (int i = 0; i < courseStructureSubjectList.size(); i++) {
+            subjectList.add(getById(courseStructureSubjectList.get(i).getSubjectId()));
+        }
+        return subjectList;
+    }
+
+    public List<Subject> getSubjectsInSemesterRegistration(int registrationId) {
+        String sql = "SELECT * FROM registration_subject_relation WHERE registrationId = ?";
+        List<SemesterRegistrationSubject> semesterRegistrationSubjects = template.query(sql, new Object[] {registrationId}, new BeanPropertyRowMapper<>(SemesterRegistrationSubject.class));
+        List<Subject> subjectList = new ArrayList<>();
+        for (int i = 0; i < semesterRegistrationSubjects.size(); i++) {
+            subjectList.add(getById(semesterRegistrationSubjects.get(i).getSubjectId()));
         }
         return subjectList;
     }

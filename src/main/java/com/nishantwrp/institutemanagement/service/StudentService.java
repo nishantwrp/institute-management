@@ -48,4 +48,8 @@ public class StudentService {
         students.delete(student.getRollNo());
         registrationApplications.delete(student.getApplicationId());
     }
+
+    public void updateStudent(Student student) {
+        students.update(student);
+    }
 }

@@ -124,3 +124,45 @@ CREATE TABLE IF NOT EXISTS subject_structure_relation
   FOREIGN KEY (subjectId) REFERENCES subject(id) ON DELETE CASCADE,
   FOREIGN KEY (courseStructureId) REFERENCES course_structure(id)  ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS semester_registration
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  studentRollNo VARCHAR(50) NOT NULL,
+  semesterId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (studentRollNo) REFERENCES student(rollNo) ON DELETE CASCADE,
+  FOREIGN KEY (semesterId) REFERENCES semester(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS registration_subject_relation
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  registrationId INT NOT NULL,
+  subjectId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (registrationId) REFERENCES semester_registration(id) ON DELETE CASCADE,
+  FOREIGN KEY (subjectId) REFERENCES subject(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS fee_transaction
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  amount INT NOT NULL,
+  date DATE NOT NULL,
+  transactionId VARCHAR(100) NOT NULL,
+  studentRollNo VARCHAR(50) NOT NULL,
+  semesterId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (studentRollNo) REFERENCES student(rollNo) ON DELETE CASCADE,
+  FOREIGN KEY (semesterId) REFERENCES semester(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS result
+(
+  id INT NOT NULL AUTO_INCREMENT,
+  grade ENUM('A', 'A-', 'B', 'B-', 'C', 'C-', 'F'),
+  subjectRegistrationId INT NOT NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (subjectRegistrationId) REFERENCES registration_subject_relation(id) ON DELETE CASCADE
+);

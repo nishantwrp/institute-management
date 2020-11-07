@@ -40,4 +40,13 @@ public class StudentRepository {
         String sql = "DELETE FROM student WHERE rollNo = ?";
         template.update(sql, rollNo);
     }
+
+    public void update(Student student) {
+        String sql = "UPDATE student SET name=?, email=?, phone=?, dob=?, bio=?, address=? WHERE rollNo = ?";
+
+        template.update(
+                sql, student.getName(), student.getEmail(), student.getPhone(),
+                student.getDob(), student.getBio(), student.getAddress(),
+                student.getRollNo());
+    }
 }

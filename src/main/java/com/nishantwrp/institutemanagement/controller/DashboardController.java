@@ -1,5 +1,6 @@
 package com.nishantwrp.institutemanagement.controller;
 
+import com.nishantwrp.institutemanagement.form.OptionalSubjectsForm;
 import com.nishantwrp.institutemanagement.model.*;
 import com.nishantwrp.institutemanagement.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpSession;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -47,6 +49,18 @@ public class DashboardController extends BaseController {
     @Autowired
     private CourseStructureService courseStructureService;
 
+    @Autowired
+    private SemesterRegistrationService semesterRegistrationService;
+
+    @Autowired
+    private FeeTransactionService feeTransactionService;
+
+    @Autowired
+    private SemesterRegistrationSubjectService semesterRegistrationSubjectService;
+
+    @Autowired
+    private ResultService resultService;
+
     // Needed to automatically convert String date in form to Date object.
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -61,6 +75,46 @@ public class DashboardController extends BaseController {
 
         addDefaultAttributes(model, session);
         return "dashboard/index";
+    }
+
+    @PostMapping("/dashboard/studentUpdate")
+    public String studentUpdate(@ModelAttribute Student userProfile, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        userProfile.setRollNo(model.getAttribute("username").toString());
+        studentService.updateStudent(userProfile);
+        toastService.redirectWithSuccessToast(attributes, "Profile updated successfully.");
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/dashboard/facultyUpdate")
+    public String facultyUpdate(@ModelAttribute Faculty userProfile, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("faculty")) {
+            return "redirect:/";
+        }
+
+        Faculty faculty = facultyService.getFacultyByEmail(model.getAttribute("username").toString());
+        userProfile.setId(faculty.getId());
+        userProfile.setEmail(faculty.getEmail());
+        facultyService.updateFaculty(userProfile);
+        toastService.redirectWithSuccessToast(attributes, "Profile updated successfully.");
+        return "redirect:/dashboard";
     }
 
     @GetMapping("/dashboard/manage/faculty")
@@ -832,8 +886,36 @@ public class DashboardController extends BaseController {
         }
 
         Student student = studentService.getStudentByRollNo(rollNo);
+        List<SemesterRegistration> semesterRegistrations = semesterRegistrationService.getAllSemesterRegistrationsByStudent(student);
+
         model.addAttribute("student", student);
+        model.addAttribute("semesterRegistrations", semesterRegistrations);
         return "dashboard/student";
+    }
+
+    @GetMapping("/dashboard/manage/student/{rollNo}/registration/{registrationId}")
+    public String manageStudent(@PathVariable("rollNo") String rollNo, @PathVariable("registrationId") String registrationId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("admin")) {
+            return "redirect:/";
+        }
+
+        Student student = studentService.getStudentByRollNo(rollNo);
+        SemesterRegistration semesterRegistration = semesterRegistrationService.getSemesterRegistrationById(registrationId);
+        Semester semester = semesterService.getSemesterById(semesterRegistration.getSemesterId());
+        List<FeeTransaction> feeTransactions = feeTransactionService.getAllFeeTransactionsByStudentForSemester(student, semester);
+
+        model.addAttribute("student", student);
+        model.addAttribute("semester", semester);
+        model.addAttribute("semesterRegistration", semesterRegistration);
+        model.addAttribute("feeTransactions", feeTransactions);
+        return "dashboard/semesterRegistration";
     }
 
     @GetMapping("/dashboard/manage/student/{rollNo}/delete")
@@ -853,5 +935,280 @@ public class DashboardController extends BaseController {
         studentService.deleteStudent(student);
         toastService.redirectWithSuccessToast(attributes, "Student deleted successfully.");
         return "redirect:/dashboard/manage/session/" + student.getSessionId();
+    }
+
+    @GetMapping("/dashboard/student/semesters")
+    public String studentSemesters(Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        String rollNo = model.getAttribute("username").toString();
+        Student student = studentService.getStudentByRollNo(rollNo);
+        List<Semester> semesters = semesterService.getAllSemestersForStudent(student);
+        model.addAttribute("semesters", semesters);
+        return "dashboard/studentSemesters";
+    }
+
+    @GetMapping("/dashboard/student/semester/{semesterId}/register")
+    public String studentRegisterSemester(@PathVariable("semesterId") String semesterId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        String rollNo = model.getAttribute("username").toString();
+        Student student = studentService.getStudentByRollNo(rollNo);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        CourseStructure courseStructure = courseStructureService.getStructureByMajorAndSemester(student.getMajor(), semester);
+        model.addAttribute("courseStructure", courseStructure);
+
+        OptionalSubjectsForm optionalSubjectsForm = new OptionalSubjectsForm().buildForm(courseStructure.getOptionalSubjects());
+        model.addAttribute("optionalSubjectsForm", optionalSubjectsForm);
+        return "dashboard/studentSemesterRegister";
+    }
+
+    @PostMapping("/dashboard/student/semester/{semesterId}/register")
+    public String postStudentRegisterSemester(@ModelAttribute OptionalSubjectsForm optionalSubjectsForm, @PathVariable("semesterId") String semesterId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        String rollNo = model.getAttribute("username").toString();
+        Student student = studentService.getStudentByRollNo(rollNo);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        CourseStructure courseStructure = courseStructureService.getStructureByMajorAndSemester(student.getMajor(), semester);
+
+        List<Subject> selectedOptionalSubjects = optionalSubjectsForm.getSelectedSubjects();
+        List<Subject> compulsorySubjects = courseStructure.getCompulsorySubjects();
+
+        List<Integer> subjectIds = new ArrayList<>();
+
+        for (int i = 0; i < compulsorySubjects.size(); i++) {
+            subjectIds.add(compulsorySubjects.get(i).getId());
+        }
+
+        for (int i = 0; i < selectedOptionalSubjects.size(); i++) {
+            subjectIds.add(selectedOptionalSubjects.get(i).getId());
+        }
+
+        semesterRegistrationService.registerForSemester(student, semester, subjectIds);
+        toastService.redirectWithSuccessToast(attributes, "Registered for semester successfully.");
+        return "redirect:/dashboard/student/semester/" + semesterId;
+    }
+
+    @GetMapping("/dashboard/student/semester/{semesterId}")
+    public String getSemester(@PathVariable("semesterId") String semesterId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        String rollNo = model.getAttribute("username").toString();
+        Student student = studentService.getStudentByRollNo(rollNo);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        SemesterRegistration semesterRegistration = semesterRegistrationService.getSemesterRegistrationByStudentAndSemester(student, semester);
+        List<FeeTransaction> feeTransactions = feeTransactionService.getAllFeeTransactionsByStudentForSemester(student, semester);
+
+        model.addAttribute("semester", semester);
+        model.addAttribute("semesterRegistration", semesterRegistration);
+        model.addAttribute("feeTransactions", feeTransactions);
+        return "dashboard/studentSemester";
+    }
+
+    @GetMapping("/dashboard/student/semester/{semesterId}/add/fee")
+    public String addFee(@PathVariable("semesterId") String semesterId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        Semester semester = semesterService.getSemesterById(semesterId);
+
+        model.addAttribute("semester", semester);
+        model.addAttribute("feeTransaction", new FeeTransaction());
+        return "dashboard/addFee";
+    }
+
+    @PostMapping("/dashboard/student/semester/{semesterId}/add/fee")
+    public String postAddFee(@ModelAttribute FeeTransaction feeTransaction, @PathVariable("semesterId") String semesterId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        String rollNo = model.getAttribute("username").toString();
+        Student student = studentService.getStudentByRollNo(rollNo);
+        Semester semester = semesterService.getSemesterById(semesterId);
+        feeTransactionService.addFeeTransaction(student, semester, feeTransaction);
+        toastService.redirectWithSuccessToast(attributes, "Fee transaction added successfully.");
+        return "redirect:/dashboard/student/semester/" + semesterId;
+    }
+
+    @GetMapping("/dashboard/student/semester/{semesterId}/fee/{feeId}/delete")
+    public String deleteFee(@PathVariable("semesterId") String semesterId, @PathVariable("feeId") String feeId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("student")) {
+            return "redirect:/";
+        }
+
+        feeTransactionService.deleteFeeTransaction(feeId);
+        toastService.redirectWithSuccessToast(attributes, "Fee transaction deleted successfully.");
+        return "redirect:/dashboard/student/semester/" + semesterId;
+    }
+
+    @GetMapping("/dashboard/faculty/subjects")
+    public String facultySubjects(Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("faculty")) {
+            return "redirect:/";
+        }
+
+        String userEmail = model.getAttribute("username").toString();
+        Faculty faculty = facultyService.getFacultyByEmail(userEmail);
+        List<Subject> subjects = subjectService.getAllSubjectsByFaculty(faculty);
+
+        model.addAttribute("subjects", subjects);
+        return "dashboard/facultySubjects";
+    }
+
+    @GetMapping("/dashboard/faculty/subject/{subjectId}")
+    public String facultySubject(@PathVariable("subjectId") String subjectId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("faculty")) {
+            return "redirect:/";
+        }
+
+        String userEmail = model.getAttribute("username").toString();
+        Faculty faculty = facultyService.getFacultyByEmail(userEmail);
+        Subject subject = subjectService.getSubjectById(subjectId);
+        List<SemesterRegistrationSubject> semesterRegistrationSubjectList = semesterRegistrationSubjectService.getAllBySubject(subject);
+
+        model.addAttribute("subject", subject);
+        model.addAttribute("registrations", semesterRegistrationSubjectList);
+        return "dashboard/facultySubject";
+    }
+
+    @GetMapping("/dashboard/faculty/subject/{subjectId}/registration/{registrationId}")
+    public String facultySubjectRegistration(@PathVariable("subjectId") String subjectId, @PathVariable("registrationId") String registrationId, Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("faculty")) {
+            return "redirect:/";
+        }
+
+        String userEmail = model.getAttribute("username").toString();
+        Faculty faculty = facultyService.getFacultyByEmail(userEmail);
+        Subject subject = subjectService.getSubjectById(subjectId);
+        SemesterRegistrationSubject semesterRegistrationSubject = semesterRegistrationSubjectService.getById(registrationId);
+
+        model.addAttribute("subject", subject);
+        model.addAttribute("registration", semesterRegistrationSubject);
+
+        if (semesterRegistrationSubject.getResult() == null) {
+            model.addAttribute("result", new Result());
+        }
+
+        return "dashboard/facultySubjectRegistration";
+    }
+
+    @PostMapping("/dashboard/faculty/subject/{subjectId}/registration/{registrationId}/grade")
+    public String facultyGradeSubjectRegistration(@ModelAttribute Result result, @PathVariable("subjectId") String subjectId, @PathVariable("registrationId") String registrationId, Model model, HttpSession session, RedirectAttributes attributes) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("faculty")) {
+            return "redirect:/";
+        }
+
+        resultService.createResult(result, registrationId);
+        toastService.redirectWithSuccessToast(attributes, "Graded this student successfully.");
+        return "redirect:/dashboard/faculty/subject/" + subjectId + "/registration/" + registrationId;
+    }
+
+    @GetMapping("/dashboard/faculty/payouts")
+    public String facultyPayouts(Model model, HttpSession session) {
+        if (!isAuthenticated(session)) {
+            return "redirect:/";
+        }
+
+        addDefaultAttributes(model, session);
+
+        String userRole = model.getAttribute("userRole").toString();
+        if (!userRole.equals("faculty")) {
+            return "redirect:/";
+        }
+
+        String userEmail = model.getAttribute("username").toString();
+        Faculty faculty = facultyService.getFacultyByEmail(userEmail);
+        List<Payout> payouts = payoutService.getAllPayoutsByFaculty(faculty);
+
+        model.addAttribute("payouts", payouts);
+        return "dashboard/facultyPayouts";
     }
 }

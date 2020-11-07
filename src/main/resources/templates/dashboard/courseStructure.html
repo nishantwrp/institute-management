@@ -46,7 +46,7 @@
                                     <td th:if="${structure.optionalSubjects.size() == 0}">None</td>
                                     <td th:unless="${structure.optionalSubjects.size() == 0}">
                                         <div th:each="subject: ${structure.optionalSubjects}">
-                                            <a th:href="${'/dashboard/manage/subject/' + subject.id}" th:text="${subject.name}"></a>
+                                            <a th:href="${'/dashboard/manage/subject/' + subject.id}" th:text="${subject.code + ' - ' + subject.name}"></a>
                                             <br>
                                         </div>
                                     </td>
@@ -56,7 +56,7 @@
                                     <td th:if="${structure.compulsorySubjects.size() == 0}">None</td>
                                     <td th:unless="${structure.compulsorySubjects.size() == 0}">
                                         <div th:each="subject: ${structure.compulsorySubjects}">
-                                            <a th:href="${'/dashboard/manage/subject/' + subject.id}" th:text="${subject.name}"></a>
+                                            <a th:href="${'/dashboard/manage/subject/' + subject.id}" th:text="${subject.code + ' - ' + subject.name}"></a>
                                             <br>
                                         </div>
                                     </td>

@@ -34,4 +34,18 @@ public class FacultyRepository {
         String sql = "DELETE FROM faculty WHERE id = ?";
         template.update(sql, id);
     }
+
+    public Faculty getByEmail(String email) {
+        String sql = "SELECT * FROM faculty WHERE email = ?";
+        return template.queryForObject(sql, new Object[] {email}, new BeanPropertyRowMapper<>(Faculty.class));
+    }
+
+    public void update(Faculty faculty) {
+        String sql = "UPDATE faculty SET name=?, email=?, phone=?, dob=?, bio=?, address=? WHERE id = ?";
+
+        template.update(
+                sql, faculty.getName(), faculty.getEmail(), faculty.getPhone(),
+                faculty.getDob(), faculty.getBio(), faculty.getAddress(),
+                faculty.getId());
+    }
 }

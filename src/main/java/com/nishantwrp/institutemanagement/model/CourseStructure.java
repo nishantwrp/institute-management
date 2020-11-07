@@ -35,6 +35,7 @@ public class CourseStructure {
     private List<Subject> optionalSubjects;
     private List<Subject> compulsorySubjects;
     private Major major;
+    private Semester semester;
 
     public List<Subject> getCompulsorySubjects() {
         return compulsorySubjects;
@@ -58,5 +59,13 @@ public class CourseStructure {
 
     public void setMajor(Major major) {
         this.major = major;
+    }
+
+    public Semester getSemester() {
+        return semester;
+    }
+
+    public void setSemester(Semester semester) {
+        this.semester = semester;
     }
 }

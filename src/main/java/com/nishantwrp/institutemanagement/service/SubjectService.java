@@ -1,6 +1,7 @@
 package com.nishantwrp.institutemanagement.service;
 
 import com.nishantwrp.institutemanagement.model.CourseStructure;
+import com.nishantwrp.institutemanagement.model.Faculty;
 import com.nishantwrp.institutemanagement.model.Subject;
 import com.nishantwrp.institutemanagement.repository.FacultyRepository;
 import com.nishantwrp.institutemanagement.repository.SubjectRepository;
@@ -52,8 +53,7 @@ public class SubjectService {
 
     public List<Subject> getAllSubjectsNotPresentInCourseStructure(CourseStructure courseStructure) {
         List<Subject> allSubjects = subjects.getAll();
-        List<Subject> optional = subjects.getSubjectsInCourseStructure(courseStructure.getId(), true);
-        List<Subject> compulsory = subjects.getSubjectsInCourseStructure(courseStructure.getId(), false);
+        List<Subject> included = subjects.getSubjectsInCourseStructure(courseStructure.getId());
         List<Subject> subjectList = new ArrayList<>();
 
         for (int i = 0; i < allSubjects.size(); i++) {
@@ -61,19 +61,10 @@ public class SubjectService {
 
             Boolean flag = true;
 
-            for (int j = 0; j < optional.size(); j++) {
-                if (optional.get(j).getId() == subject.getId()) {
+            for (int j = 0; j < included.size(); j++) {
+                if (included.get(j).getId() == subject.getId()) {
                     flag = false;
                     break;
-                }
-            }
-
-            if (flag) {
-                for (int j = 0; j < compulsory.size(); j++) {
-                    if (compulsory.get(j).getId() == subject.getId()) {
-                        flag = false;
-                        break;
-                    }
                 }
             }
 
@@ -83,5 +74,9 @@ public class SubjectService {
 
         }
         return subjectList;
+    }
+
+    public List<Subject> getAllSubjectsByFaculty(Faculty faculty) {
+        return subjects.getAllByFaculty(faculty.getId());
     }
 }
